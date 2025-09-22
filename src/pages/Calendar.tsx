@@ -2,32 +2,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
-
-interface CalendarActivity {
-  id: string;
-  title: string;
-  subject: string;
-  time: string;
-  duration: string;
-}
+import { useStudy } from "@/contexts/StudyContext";
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
-  // Mock activities data
-  const activities: Record<string, CalendarActivity[]> = {
-    "2024-01-15": [
-      { id: "1", title: "Revisar Funções Quadráticas", subject: "Matemática", time: "14:30", duration: "1h 30min" },
-      { id: "2", title: "Leitura - Segunda Guerra Mundial", subject: "História", time: "16:00", duration: "45min" },
-    ],
-    "2024-01-16": [
-      { id: "3", title: "Exercícios de Inglês", subject: "Inglês", time: "09:00", duration: "1h" },
-    ],
-    "2024-01-18": [
-      { id: "4", title: "Química Orgânica", subject: "Química", time: "15:00", duration: "2h" },
-    ],
-  };
+  const { getActivitiesForDate } = useStudy();
 
   const monthNames = [
     "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -77,13 +57,14 @@ const Calendar = () => {
 
   const hasActivities = (date: Date) => {
     const dateKey = formatDateKey(date);
-    return activities[dateKey] && activities[dateKey].length > 0;
+    const activitiesForDate = getActivitiesForDate(dateKey);
+    return activitiesForDate.length > 0;
   };
 
   const getSelectedDateActivities = () => {
     if (!selectedDate) return [];
     const dateKey = formatDateKey(selectedDate);
-    return activities[dateKey] || [];
+    return getActivitiesForDate(dateKey);
   };
 
   const isToday = (date: Date) => {

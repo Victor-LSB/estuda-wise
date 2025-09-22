@@ -7,10 +7,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useStudy } from "@/contexts/StudyContext";
 
 const RegisterActivity = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { addActivity } = useStudy();
   
   const [formData, setFormData] = useState({
     title: "",
@@ -38,7 +40,16 @@ const RegisterActivity = () => {
       return;
     }
 
-    // Here you would normally save to a database or state management
+    // Save the activity using the context
+    addActivity({
+      title: formData.title,
+      subject: formData.subject,
+      date: formData.date,
+      time: formData.time,
+      duration: formData.duration,
+      notes: formData.notes,
+    });
+
     toast({
       title: "Atividade salva! ✅",
       description: "Sua atividade de estudo foi cadastrada com sucesso.",

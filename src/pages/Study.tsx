@@ -1,61 +1,13 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Clock, CheckCircle2, Circle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-interface StudyActivity {
-  id: string;
-  title: string;
-  subject: string;
-  date: string;
-  time: string;
-  duration: string;
-  completed: boolean;
-  notes?: string;
-}
+import { useStudy } from "@/contexts/StudyContext";
 
 const Study = () => {
   const navigate = useNavigate();
-  const [activities, setActivities] = useState<StudyActivity[]>([
-    {
-      id: "1",
-      title: "Revisar Funções Quadráticas",
-      subject: "Matemática",
-      date: "2024-01-15",
-      time: "14:30",
-      duration: "1h 30min",
-      completed: false,
-    },
-    {
-      id: "2", 
-      title: "Leitura - Segunda Guerra Mundial",
-      subject: "História",
-      date: "2024-01-15",
-      time: "16:00",
-      duration: "45min",
-      completed: true,
-    },
-    {
-      id: "3",
-      title: "Exercícios de Inglês",
-      subject: "Inglês",
-      date: "2024-01-16",
-      time: "09:00",
-      duration: "1h",
-      completed: false,
-    },
-  ]);
+  const { activities, toggleComplete } = useStudy();
 
-  const toggleComplete = (id: string) => {
-    setActivities(prev =>
-      prev.map(activity =>
-        activity.id === id
-          ? { ...activity, completed: !activity.completed }
-          : activity
-      )
-    );
-  };
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);

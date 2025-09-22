@@ -3,10 +3,37 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Calendar, BarChart3, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useStudy } from "@/contexts/StudyContext";
 
 const Home = () => {
   const navigate = useNavigate();
   const [userName] = useState("Maria"); // In a real app, this would come from auth
+  const { activities } = useStudy();
+
+  // Get next upcoming activity
+  const getNextActivity = () => {
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    
+    return activities
+      .filter(activity => !activity.completed)
+      .filter(activity => {
+        const activityDate = new Date(activity.date + 'T' + activity.time);
+        return activityDate >= now || activity.date === today;
+      })
+      .sort((a, b) => {
+        const dateTimeA = new Date(a.date + 'T' + a.time);
+        const dateTimeB = new Date(b.date + 'T' + b.time);
+        return dateTimeA.getTime() - dateTimeB.getTime();
+      })[0];
+  };
+
+  const nextActivity = getNextActivity();
+
+  // Calculate stats
+  const totalActivities = activities.length;
+  const completedActivities = activities.filter(a => a.completed).length;
+  const completionRate = totalActivities > 0 ? Math.round((completedActivities / totalActivities) * 100) : 0;
 
   const quickActions = [
     {
@@ -79,20 +106,37 @@ const Home = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-foreground">Matemática - Álgebra</span>
-              <span className="text-sm text-muted-foreground">14:30</span>
+          {nextActivity ? (
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-foreground">
+                  {nextActivity.subject} - {nextActivity.title}
+                </span>
+                <span className="text-sm text-muted-foreground">{nextActivity.time}</span>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Duração: {nextActivity.duration} • {new Date(nextActivity.date).toLocaleDateString('pt-BR') === new Date().toLocaleDateString('pt-BR') ? 'Hoje' : new Date(nextActivity.date).toLocaleDateString('pt-BR')}
+              </div>
+              <div className="pt-2">
+                <Button size="sm" className="w-full">
+                  Iniciar Agora
+                </Button>
+              </div>
             </div>
-            <div className="text-sm text-muted-foreground">
-              Duração: 1h 30min • Hoje
-            </div>
-            <div className="pt-2">
-              <Button size="sm" className="w-full">
-                Iniciar Agora
+          ) : (
+            <div className="text-center py-4">
+              <div className="text-4xl mb-2">📅</div>
+              <p className="text-muted-foreground">Nenhuma atividade pendente</p>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="mt-3"
+                onClick={() => navigate("/register-activity")}
+              >
+                Adicionar Atividade
               </Button>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
@@ -100,13 +144,13 @@ const Home = () => {
       <div className="grid grid-cols-2 gap-3">
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-primary">12</div>
-            <div className="text-sm text-muted-foreground">Horas esta semana</div>
+            <div className="text-2xl font-bold text-primary">{totalActivities}</div>
+            <div className="text-sm text-muted-foreground">Total atividades</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-accent-foreground">85%</div>
+            <div className="text-2xl font-bold text-accent-foreground">{completionRate}%</div>
             <div className="text-sm text-muted-foreground">Taxa de conclusão</div>
           </CardContent>
         </Card>
