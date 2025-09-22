@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
-import { Home, Calendar, BarChart3, BookOpen } from "lucide-react";
+import { Home, Calendar, BarChart3, BookOpen, LogOut } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface LayoutProps {
   children: ReactNode;
@@ -22,7 +23,18 @@ const Layout = ({ children }: LayoutProps) => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-card border-b border-border px-4 py-3 shadow-sm">
-        <h1 className="text-xl font-semibold text-foreground">Estuda AI</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-semibold text-foreground">Estuda AI</h1>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/login")}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Sair
+          </Button>
+        </div>
       </header>
 
       {/* Main Content */}

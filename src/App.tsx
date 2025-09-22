@@ -9,6 +9,9 @@ import Study from "./pages/Study";
 import RegisterActivity from "./pages/RegisterActivity";
 import Calendar from "./pages/Calendar";
 import Analytics from "./pages/Analytics";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,16 +22,40 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/study" element={<Study />} />
-            <Route path="/register-activity" element={<RegisterActivity />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
+        <Routes>
+          {/* Auth Routes - Without Layout */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          
+          {/* App Routes - With Layout */}
+          <Route path="/" element={
+            <Layout>
+              <Home />
+            </Layout>
+          } />
+          <Route path="/study" element={
+            <Layout>
+              <Study />
+            </Layout>
+          } />
+          <Route path="/register-activity" element={
+            <Layout>
+              <RegisterActivity />
+            </Layout>
+          } />
+          <Route path="/calendar" element={
+            <Layout>
+              <Calendar />
+            </Layout>
+          } />
+          <Route path="/analytics" element={
+            <Layout>
+              <Analytics />
+            </Layout>
+          } />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
